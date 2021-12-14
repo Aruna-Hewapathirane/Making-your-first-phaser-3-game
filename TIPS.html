@@ -1,0 +1,11 @@
+how do I make my player move using WASD instead of cursor keys
+
+// somewhere in your create function
+this.wasd = this.input.keyboard.addKeys('W,A,S,D');
+
+// in your update:
+if (this.wasd.A.isDown) {
+  // move left
+} else if (this.wasd.D.isDown) {
+  // move right
+}

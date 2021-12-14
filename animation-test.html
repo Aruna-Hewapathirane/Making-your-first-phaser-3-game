@@ -1,0 +1,120 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 3</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0-beta.3/phaser.js"></script>
+    <style type="text/css">
+	    
+	 @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Expletus+Sans:wght@700&family=Shalimar&display=swap');
+	    
+	    
+        body {
+            margin: 0;
+            padding:0;
+        }
+        
+        #phaser3-example{
+		box-shadow:0 0 4px 4px grey;		
+		
+		}
+		
+	h3 {
+    font-family: 'Caveat', cursive;
+    font-size: 25px;
+    padding-left: 10px;
+    top: -33px;
+    position: relative;
+}
+    </style>
+</head>
+<body>
+	<div id="phaser3-example"></div>
+	<h3>How to play instructions</h3>
+
+<script type="text/javascript">
+
+    var config = {
+        width: window.innerWidth,        
+        //height: window.innerHeight-300,
+        height:600,
+        parent:'phaser3-example', // display game output at the top of the page         
+        physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },      scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.image('sky', 'assets/background.png');     
+        
+        
+        
+        this.load.image('ground', 'assets/platform.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('bird', 'assets/birds.png', { frameWidth: 70, frameHeight: 51 });
+    }
+
+    function create ()
+    {   
+        this.background = this.add.tileSprite(0, 0, window.innerWidth, window.innerHeight, "sky")
+		.setOrigin(0)
+		.setScrollFactor(0, 1); //this line keeps your background from scrolling outside of camera bounds
+        
+        platforms = this.physics.add.staticGroup();
+
+    platforms.create(400, 568, 'ground').setScale(6.5,2).refreshBody();
+
+    platforms.create(600, 400, 'ground');
+    platforms.create(250, 250, 'ground');
+    platforms.create(750, 220, 'ground');
+                
+        //pic.setScale(2.5,.5);
+        
+        
+        player = this.physics.add.sprite(100, 450, 'bird');
+
+player.setBounce(0.2);
+player.setCollideWorldBounds(true);
+
+this.anims.create({
+    key: 'blue',
+    frames: this.anims.generateFrameNumbers('bluebird', {frames:[0,2,4]}),
+    frameRate: 10,
+    repeat: -1
+});
+        
+  birdy = this.physics.add.sprite(300, 450, 'bird');      
+       
+        
+        cursors = this.input.keyboard.createCursorKeys();
+
+        this.physics.add.collider(birdy, platforms);
+    }
+
+    function update ()
+    {
+	    this.background.tilePositionX += 1;
+	    
+if (cursors.left.isDown)
+{
+    birdy.anims.play('blue', true);
+}
+    }
+
+</script>
+
+</body>
+</html>

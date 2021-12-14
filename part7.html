@@ -3,7 +3,7 @@
 <head> 
     <meta charset="UTF-8" />
     <title>Making your first Phaser 3 Game - Part 7</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0-beta.3/phaser.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -44,7 +44,9 @@
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        //this.load.spritesheet('dude', 'assets/birds.png', { frameWidth: 70, frameHeight: 52 });
+        this.load.spritesheet('dude', 'assets/eagle.png', { frameWidth: 148, frameHeight: 180 });
     }
 
     function create ()
@@ -60,26 +62,29 @@
         platforms.create(750, 220, 'ground');
 
         player = this.physics.add.sprite(100, 450, 'dude');
+        player.setScale(.5);
 
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11] }),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'turn',
-            frames: [ { key: 'dude', frame: 4 } ],
+            frames: [ { key: 'dude', frame: 3 } ],
             frameRate: 20
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            //frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,2,4] }),
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11] }),
             frameRate: 10,
             repeat: -1
         });
@@ -94,13 +99,13 @@
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
-
+            player.flipX = true;
             player.anims.play('left', true);
         }
         else if (cursors.right.isDown)
         {
             player.setVelocityX(160);
-
+		player.flipX = false;
             player.anims.play('right', true);
         }
         else
