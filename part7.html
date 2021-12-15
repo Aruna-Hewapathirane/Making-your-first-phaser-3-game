@@ -46,7 +46,10 @@
         this.load.image('bomb', 'assets/bomb.png');
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         //this.load.spritesheet('dude', 'assets/birds.png', { frameWidth: 70, frameHeight: 52 });
-        this.load.spritesheet('dude', 'assets/eagle.png', { frameWidth: 148, frameHeight: 180 });
+        //this.load.spritesheet('dude', 'assets/eagle.png', { frameWidth: 148, frameHeight: 180 });
+	//this.load.spritesheet('dude', 'assets/bat.png', { frameWidth: 118, frameHeight: 75 });
+	
+	this.load.spritesheet('dude', 'assets/harmony.png', { frameWidth: 108, frameHeight: 110 });
     }
 
     function create ()
@@ -62,34 +65,40 @@
         platforms.create(750, 220, 'ground');
 
         player = this.physics.add.sprite(100, 450, 'dude');
-        player.setScale(.5);
+        player.setScale(1);
+        player.body.setSize(106, 100, 0, -10);
 
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11] }),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4] }),
+            frameRate: 20,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'dude', frame: 3 } ],
-            frameRate: 20
+            key: 'stop',
+            //frames: [ { key: 'dude', frame: 0 } ],
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4] }),
+            frameRate: 10,
+            repeat: -1
         });
 
         this.anims.create({
             key: 'right',
             //frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
             //frames: this.anims.generateFrameNumbers('dude', { frames:[0,2,4] }),
-            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11] }),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            frameRate: 20,
             repeat: -1
         });
 
         cursors = this.input.keyboard.createCursorKeys();
+        
+        this.wasd = this.input.keyboard.addKeys('W,A,S,D');
 
         this.physics.add.collider(player, platforms);
     }
@@ -99,12 +108,14 @@
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
+            
             player.flipX = true;
             player.anims.play('left', true);
         }
         else if (cursors.right.isDown)
         {
             player.setVelocityX(160);
+		
 		player.flipX = false;
             player.anims.play('right', true);
         }
@@ -112,13 +123,21 @@
         {
             player.setVelocityX(0);
 
-            player.anims.play('turn');
+            player.anims.play('right');
         }
 
         if (cursors.up.isDown && player.body.touching.down)
         {
             player.setVelocityY(-330);
         }
+        
+        if (this.wasd.A.isDown) { 
+		player.anims.play('stop'); 
+		console.log("ok");
+		player.tint =Math.random() * 0xfd6fb5 ;//0xffffff;
+		
+		} 
+		
     }
 
 </script>

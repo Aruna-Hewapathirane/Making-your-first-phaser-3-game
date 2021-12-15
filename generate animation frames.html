@@ -1,0 +1,94 @@
+<html><head>
+    <meta charset="utf-8">
+    <title>Phaser Sandbox Frame</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            background-color: white;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0-beta.3/phaser.js"></script>
+    
+<body>
+
+    <div id="phaser-example"></div>
+
+    <script type="text/javascript">
+
+    class Example extends Phaser.Scene
+{
+    constructor ()
+    {
+        super();
+    }
+
+    preload ()
+    {
+        this.load.spritesheet('boom', 'assets/sprites/explosion.png', { frameWidth: 64, frameHeight: 64, endFrame: 23 });
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    }
+
+    create ()
+    {
+        this.add.text(400, 32, 'Check the source code for comments', { color: '#00ff00' }).setOrigin(0.5, 0);
+
+        //  Our 'boom' spritesheet has 23 frames in it.
+        //  This animation will use them all by just giving it the sprite sheet key:
+        const config1 = {
+            key: 'all',
+            frames: 'dude',
+            frameRate: 20,
+            repeat: -1
+        };
+
+        //  Here we use the 'generateFrameNumbers' function instead to set the start and end frame:
+        const config2 = {
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 20,
+            repeat: -1
+        };
+        
+        //  Here we use the 'generateFrameNumbers' function instead to set the start and end frame:
+        const config3 = {
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 20,
+            repeat: -1
+        };
+
+        //  Here we use the 'frames' array because we want to specify the exact frames to use:
+        const config4 = {
+            key: 'leftright',
+            frames: this.anims.generateFrameNumbers('dude', { frames: [ 0, 0, 0,0, 0, 0, 8,8,8,8,8,8 ] }),
+            frameRate: 20,
+            repeat: -1
+        };
+
+        this.anims.create(config1);
+        this.anims.create(config2);
+        this.anims.create(config3);
+	this.anims.create(config4);
+
+        this.add.sprite(100, 300, 'dude').play('all');
+        this.add.sprite(200, 300, 'dude').play('left');
+        this.add.sprite(300, 300, 'dude').play('right');
+        this.add.sprite(400, 300, 'dude').play('leftright');
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    parent: 'phaser-example',
+    width: 800,
+    height: 600,
+    scene: [ Example ]
+};
+
+const game = new Phaser.Game(config);
+
+    </script>
+
+
+
+</body></html>
