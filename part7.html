@@ -16,8 +16,9 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 800,
+        //width: 800,
         height: 600,
+        width:window.innerWidth,        
         physics: {
             default: 'arcade',
             arcade: {
@@ -29,69 +30,125 @@
             preload: preload,
             create: create,
             update: update
-        }
+        },
+     
     };
 
     var player;
     var platforms;
     var cursors;
+    var bb;
+    var bullet;
+    var saw;
+    var music;
+    var counter=0;
 
     var game = new Phaser.Game(config);
 
     function preload ()
     {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/platform.png');
+        this.load.image('sky', 'assets/background.png');
+        this.load.image('ground', 'assets/platform2.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
-        //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.image('saw', 'assets/saw.png');
+        //this.load.image('bullet', 'assets/bullet.png');
+        this.load.image('bb', 'assets/bulletbillsmall2.png');
+        this.load.image('bb2', 'assets/bulletbillsmall1.png');
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('bullet', 'assets/bullet.png', { frameWidth: 40, frameHeight: 28 });
+        this.load.spritesheet('skull', 'assets/fireskullbig.png', { frameWidth: 240, frameHeight: 320 });
         //this.load.spritesheet('dude', 'assets/birds.png', { frameWidth: 70, frameHeight: 52 });
         //this.load.spritesheet('dude', 'assets/eagle.png', { frameWidth: 148, frameHeight: 180 });
 	//this.load.spritesheet('dude', 'assets/bat.png', { frameWidth: 118, frameHeight: 75 });
 	
-	this.load.spritesheet('dude', 'assets/harmony.png', { frameWidth: 108, frameHeight: 110 });
+	//this.load.spritesheet('dude', 'assets/harmony.png', { frameWidth: 108, frameHeight: 110 });
+	
+	//SOUNDS
+	//this.game.load.audio('saw', 'audio/buzzsaw.wav');
+	this.load.audio('saw', 'audio/buzzsaw.wav');
+    
     }
 
     function create ()
     {
-        this.add.image(400, 300, 'sky');
+	    
+	    music = this.sound.add('saw');
+//	music.play();
+    
+        this.add.image(400, 300, 'sky').setScale(.5);
 
         platforms = this.physics.add.staticGroup();
 
-        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+        platforms.create(400, 568, 'ground').setScale(4,1).refreshBody();
 
-        platforms.create(600, 400, 'ground');
         platforms.create(50, 250, 'ground');
-        platforms.create(750, 220, 'ground');
+        platforms.create(600, 400, 'ground');        
+        platforms.create(750, 250, 'ground');
+        platforms.create(1100, 400, 'ground');
 
-        player = this.physics.add.sprite(100, 450, 'dude');
+
+	saw=this.add.image(500, 250, 'saw');
+	
+
+       skull=this.physics.add.sprite(1100,300,'skull').setScale(.5);
+	this.anims.create({
+            key: 'fire',
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            frames: this.anims.generateFrameNumbers('skull', { frames:[0,1,2,3,4,5,6,7] }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+            skull.anims.play('fire', true);
+
+	star=this.physics.add.sprite(750, 50, 'bb');
+	star.setBounce(.5);
+	
+	star.flipX = true;
+	//star.setGravityY(-10);
+	//star.setVelocityX=(-10);
+	
+	
+	bullet = this.physics.add.sprite(200, 250, 'bullet');
+	this.anims.create({
+            key: 'blink',
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            frames: this.anims.generateFrameNumbers('bullet', { frames:[0,0,0,1,1,1] }),
+            frameRate: 10,
+            repeat: -1
+        });
+	
+	
+	player = this.physics.add.sprite(100, 450, 'dude');
         player.setScale(1);
-        player.body.setSize(106, 100, 0, -10);
+        //player.body.setSize(106, 100, 0, -10);
 
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
+        star.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
-            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4] }),
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,] }),
             frameRate: 20,
             repeat: -1
         });
 
         this.anims.create({
             key: 'stop',
-            //frames: [ { key: 'dude', frame: 0 } ],
-            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4] }),
+            frames: [ { key: 'dude', frame: 4 } ],
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4] }),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'right',
-            //frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
             //frames: this.anims.generateFrameNumbers('dude', { frames:[0,2,4] }),
-            frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
+            //frames: this.anims.generateFrameNumbers('dude', { frames:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
             frameRate: 20,
             repeat: -1
         });
@@ -101,15 +158,24 @@
         this.wasd = this.input.keyboard.addKeys('W,A,S,D');
 
         this.physics.add.collider(player, platforms);
+        this.physics.add.collider(skull, platforms);
+        this.physics.add.collider(star, platforms);
+        this.physics.add.collider(player,star);
+        this.physics.add.collider(bullet,platforms);
     }
 
     function update ()
     {
+	    //star.setVelocityX(-100);
+	    //saw.rotation+=1;
+	    
+	    bullet.anims.play('blink', true);
+	    
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
             
-            player.flipX = true;
+            //player.flipX = true;
             player.anims.play('left', true);
         }
         else if (cursors.right.isDown)
@@ -118,12 +184,22 @@
 		
 		player.flipX = false;
             player.anims.play('right', true);
+            saw.rotation+=.1;
+            
+            
+            if (counter==0){
+		    console.log("should play");
+		    music.play();
+		    counter++;
+		    }
+            
         }
         else
         {
             player.setVelocityX(0);
 
-            player.anims.play('right');
+            player.anims.play('stop');
+            //music.stop();
         }
 
         if (cursors.up.isDown && player.body.touching.down)
@@ -138,7 +214,34 @@
 		
 		} 
 		
+		
+	howFar=Phaser.Math.Distance.Between(player.x,player.y,star.x,star.y);
+	//console.log(howFar);
+	
+	/*
+	if(howFar<=400){ star.flipX=false;}
+	else
+		 star.flipX=true;
+		
+	if(howFar<=150 && star.x >=550){ 
+		star.setTexture('bb2');		
+		star.setVelocityX(-100);
+		}
+	else 	{
+		star.setTexture('bb');
+		star.setVelocityX(100);
+		star.flipX=false;
+		} */
+	
+	
+	
+	
     }
+
+function doit(){
+	music.play();
+	
+	}
 
 </script>
 

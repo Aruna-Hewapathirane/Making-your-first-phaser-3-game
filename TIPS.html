@@ -9,3 +9,13 @@ if (this.wasd.A.isDown) {
 } else if (this.wasd.D.isDown) {
   // move right
 }
+
+
+// How to make enemy AI move side to side on platform - solved by samme Feb 20
+if (enemy.x < LEFT && enemy.body.velocity.x < 0) {
+  enemy.setVelocityX(speed);
+  if (speed < MAX) speed += INC;
+} else if (enemy.x > RIGHT && enemy.body.velocity.x > 0) {
+  enemy.setVelocityX(-speed);
+  if (speed < MAX) speed += INC;
+}
